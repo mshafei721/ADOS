@@ -362,7 +362,7 @@ class AgentProtocolValidator(BaseValidator):
                     agents = all_config['agents']
                     sample_agent = next(iter(agents.values()))
                     
-                    if 'role' in sample_agent and 'tools' in sample_agent:
+                    if hasattr(sample_agent, 'role') and hasattr(sample_agent, 'tools'):
                         self.add_result(
                             "agent_invocation_structure",
                             True,

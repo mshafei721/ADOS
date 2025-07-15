@@ -66,6 +66,7 @@ class AgentConfig(BaseModel):
     llm: Optional[str] = "gpt-4"
     max_iter: Optional[int] = 5
     verbose: Optional[bool] = True
+    crew: str
     workspace: Optional[WorkspaceConfig] = None
 
 
@@ -114,7 +115,7 @@ class ConfigLoader:
         
         return crews
     
-    def load_agents_config(self) -> Dict[str, List[AgentConfig]]:
+    def load_agents_config(self) -> Dict[str, AgentConfig]:
         """Load and validate agents configuration"""
         agents_file = self.config_dir / "agents.yaml"
         
@@ -129,15 +130,13 @@ class ConfigLoader:
         if 'agents' in agents_data:
             agents_data = agents_data['agents']
         
-        # Validate agent configurations by crew
+        # Validate agent configurations (flat structure)
         agents = {}
-        for crew_name, crew_agents in agents_data.items():
-            agents[crew_name] = []
-            for agent_data in crew_agents:
-                try:
-                    agents[crew_name].append(AgentConfig(**agent_data))
-                except Exception as e:
-                    raise ValueError(f"Invalid agent configuration in crew '{crew_name}': {e}")
+        for agent_name, agent_data in agents_data.items():
+            try:
+                agents[agent_name] = AgentConfig(**agent_data)
+            except Exception as e:
+                raise ValueError(f"Invalid agent configuration for '{agent_name}': {e}")
         
         return agents
     
@@ -179,7 +178,8 @@ class ConfigLoader:
             # Check that all crews have at least one agent (if agents.yaml exists)
             if agents:
                 for crew_name in crews:
-                    if crew_name not in agents or not agents[crew_name]:
+                    crew_agents = [agent for agent in agents.values() if agent.crew == crew_name]
+                    if not crew_agents:
                         validation_results["warnings"].append(
                             f"Crew '{crew_name}' has no agents defined"
                         )
@@ -238,7 +238,7 @@ class ConfigLoader:
     def get_crew_agents(self, crew_name: str) -> List[AgentConfig]:
         """Get all agents for a specific crew"""
         agents = self.load_agents_config()
-        return agents.get(crew_name, [])
+        return [agent for agent in agents.values() if agent.crew == crew_name]
     
     def get_workspace_config(self) -> Dict[str, Any]:
         """Get workspace configuration"""
@@ -383,7 +383,7 @@ class ConfigLoader:
         """Alias for load_crews_config for backward compatibility"""
         return self.load_crews_config()
     
-    def load_agents(self) -> Dict[str, List[AgentConfig]]:
+    def load_agents(self) -> Dict[str, AgentConfig]:
         """Alias for load_agents_config for backward compatibility"""
         return self.load_agents_config()
 

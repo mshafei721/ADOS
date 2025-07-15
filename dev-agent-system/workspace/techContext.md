@@ -1,0 +1,102 @@
+# Technical Context - Agent Workspace
+
+## Overview
+This file maintains the technical context for agent crews, inherited from main planning and adapted for agent execution.
+
+---
+
+## Current Technical Environment
+
+### Technology Stack
+**Source**: Inherited from `config/tech_stack.json`
+**Scope**: Agent-specific technical decisions and constraints
+
+#### Backend Technology
+- **Language**: Python 3.11+
+- **Framework**: FastAPI (primary)
+- **Database**: PostgreSQL with SQLAlchemy ORM
+- **Testing**: pytest framework
+
+#### Frontend Technology
+- **Framework**: React 18+ with TypeScript
+- **Styling**: TailwindCSS
+- **Build Tool**: Vite
+- **State Management**: Redux Toolkit
+
+#### Infrastructure
+- **Containerization**: Docker
+- **Orchestration**: Kubernetes
+- **Cloud**: AWS (primary)
+- **IaC**: Terraform
+
+#### CI/CD
+- **Pipeline**: GitHub Actions
+- **Code Quality**: black, ruff, mypy, eslint, prettier
+- **Security**: bandit, safety, snyk
+- **Deployment**: Blue-Green strategy
+
+### Development Constraints
+**Source**: Inherited from crew configurations and system settings
+
+#### Code Quality Standards
+- **Coverage**: 80% minimum test coverage
+- **Linting**: All code must pass linting rules
+- **Style**: Follow project style guides
+- **Documentation**: API documentation with OpenAPI/Swagger
+
+#### Security Requirements
+- **Authentication**: JWT/OAuth2 standards
+- **Guidelines**: OWASP security guidelines
+- **Scanning**: Regular security scanning required
+- **Architecture**: Zero-trust principles
+
+#### Performance Requirements
+- **API Response**: < 200ms average response time
+- **Database**: Optimized queries with proper indexing
+- **Frontend**: < 3s initial load time
+- **Scalability**: Support horizontal scaling
+
+### Tool Configuration
+**Source**: Inherited from agent tool assignments
+
+#### Development Tools
+- **Code Generation**: Boilerplate generators for FastAPI, React, Docker
+- **Search Tools**: Documentation search for Python, React, Docker, K8s
+- **Testing Tools**: pytest runner, coverage reporter, security scanner
+- **Deployment Tools**: Docker builder, K8s deployer, pipeline runner
+
+### Memory and Communication
+**Source**: Inherited from system settings
+
+#### Memory Configuration
+- **Vector DB**: ChromaDB for knowledge base
+- **Crew Memory**: JSON-based local memory per crew
+- **Session Memory**: 1000 entries maximum
+- **Persistence**: `./memory/` directory structure
+
+#### Communication Protocol
+- **Protocol**: File-based communication
+- **Task Queue**: `workspace/todo.md`
+- **Progress Tracking**: `workspace/progress.md`
+- **Context Sharing**: `workspace/activeContext.md`
+- **Update Interval**: 10 seconds
+
+---
+
+## Technical Inheritance
+- **Master Plan**: `.devdocs/memory-bank/PLAN.md` (read-only reference)
+- **Main Tech Context**: `.devdocs/memory-bank/techContext.md` (inherited)
+- **Configuration**: `config/` directory (authoritative)
+- **Crew Specifications**: `config/crews.yaml` and `config/agents.yaml`
+
+## Agent-Specific Technical Notes
+- Each crew operates within defined technical constraints
+- Technology choices are consistent across crews
+- Tool usage is standardized per agent role
+- Integration patterns follow established protocols
+
+## Next Technical Steps
+- Initialize crew-specific technical environments
+- Establish development tool chains per crew
+- Configure communication and memory systems
+- Begin technical implementation following constraints

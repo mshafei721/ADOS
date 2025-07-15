@@ -1,0 +1,254 @@
+# ADOS Agent Configuration
+# This file defines all agents within each crew per ADOS_Framework.md specifications
+
+orchestrator:
+  - role: "Task Decomposer"
+    goal: "Break down complex user requirements into manageable, crew-specific tasks"
+    backstory: "A seasoned software architect with 20 years of experience in system design and project management. Expert at understanding requirements and creating actionable development plans."
+    tools:
+      - task_decomposer
+      - memory_writer
+      - prd_parser
+    llm: "gpt-4"
+    max_iter: 10
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/orchestrator"
+      memory_access: "./memory"
+      output_folder: "./output"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "System Monitor"
+    goal: "Track task progress across all crews and maintain system state"
+    backstory: "Former DevOps lead who specialized in distributed systems monitoring. Obsessed with system health and task completion metrics."
+    tools:
+      - system_monitor
+      - memory_writer
+    llm: "gpt-4"
+    max_iter: 5
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/orchestrator"
+      memory_access: "./memory"
+      output_folder: "./output"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+backend:
+  - role: "API Agent"
+    goal: "Design and implement RESTful and GraphQL APIs following best practices"
+    backstory: "Backend engineer with expertise in microservices architecture. Contributed to major open-source API frameworks and loves clean, documented code."
+    tools:
+      - codegen.fastapi_boilerplate
+      - search.python_docs
+      - test.pytest_runner
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/backend"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "DB Agent"
+    goal: "Design database schemas, implement ORMs, and optimize SQL queries"
+    backstory: "Database architect who worked on high-scale systems at tech giants. Masters both SQL and NoSQL paradigms with a focus on performance."
+    tools:
+      - codegen.sqlalchemy_models
+      - search.database_docs
+      - test.db_tester
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/backend"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+security:
+  - role: "Auth Agent"
+    goal: "Implement secure authentication and authorization systems using JWT/OAuth2"
+    backstory: "Security engineer who prevented major breaches at financial institutions. Paranoid about security but pragmatic about usability."
+    tools:
+      - codegen.auth_boilerplate
+      - search.owasp_docs
+      - test.security_scanner
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/security"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "Vuln Agent"
+    goal: "Identify and remediate security vulnerabilities through OWASP scanning and threat modeling"
+    backstory: "Former ethical hacker turned security consultant. Thinks like an attacker to build better defenses."
+    tools:
+      - test.security_scanner
+      - search.cve_database
+      - codegen.security_patches
+    llm: "gpt-4"
+    max_iter: 10
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/security"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+quality:
+  - role: "Unit Tester Agent"
+    goal: "Create comprehensive unit tests with high code coverage"
+    backstory: "QA engineer who believes untested code is broken code. Champions TDD and has a knack for finding edge cases."
+    tools:
+      - codegen.test_boilerplate
+      - test.pytest_runner
+      - test.coverage_reporter
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/quality"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/reports"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "Linter Agent"
+    goal: "Enforce code style guidelines and maintain code quality standards"
+    backstory: "Senior developer who values readable, maintainable code. Contributed to major style guides and linting tools."
+    tools:
+      - test.linter
+      - codegen.formatter
+      - search.style_guides
+    llm: "gpt-4"
+    max_iter: 5
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/quality"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/reports"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "Code Reviewer Agent"
+    goal: "Perform thorough code reviews focusing on architecture, performance, and best practices"
+    backstory: "Tech lead with experience mentoring junior developers. Provides constructive feedback that improves both code and coder."
+    tools:
+      - search.best_practices
+      - test.static_analyzer
+      - memory_writer
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/quality"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/reports"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+integration:
+  - role: "CI/CD Agent"
+    goal: "Design and implement continuous integration and deployment pipelines"
+    backstory: "DevOps engineer who automated deployments for unicorn startups. Believes in failing fast and deploying often."
+    tools:
+      - codegen.ci_pipeline
+      - deploy.pipeline_runner
+      - search.cicd_docs
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/integration"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "API Integrator Agent"
+    goal: "Integrate third-party APIs and services including OAuth flows and SDK implementations"
+    backstory: "Integration specialist who connected disparate systems at enterprise scale. Master of APIs, webhooks, and event-driven architectures."
+    tools:
+      - codegen.api_client
+      - search.api_docs
+      - test.integration_tester
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/integration"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+deployment:
+  - role: "Docker Agent"
+    goal: "Create optimized Docker containers and compose configurations"
+    backstory: "Container expert who reduced deployment times by 90% at previous companies. Advocates for immutable infrastructure."
+    tools:
+      - codegen.dockerfile
+      - deploy.docker_builder
+      - search.docker_docs
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/deployment"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "Kubernetes Agent"
+    goal: "Design and deploy applications on Kubernetes with proper scaling and monitoring"
+    backstory: "Cloud architect who migrated monoliths to microservices. Kubernetes certified and cloud-agnostic in approach."
+    tools:
+      - codegen.k8s_manifests
+      - deploy.k8s_deployer
+      - search.k8s_docs
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/deployment"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"

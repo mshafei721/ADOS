@@ -1,0 +1,64 @@
+# Quality Crew Configuration
+# Testing, linting, and code quality management
+
+name: quality
+description: "Quality assurance crew responsible for testing, linting, and code quality standards"
+version: "1.0.0"
+
+# Crew-specific configuration
+crew_settings:
+  testing_strategy: "tdd"  # tdd, bdd, traditional
+  coverage_requirement: 80  # percentage
+  linting_strictness: "strict"  # relaxed, standard, strict
+  code_review_mandatory: true
+  
+# Agent configuration overrides
+agent_overrides:
+  unit_tester_agent:
+    priority: "high"
+    timeout: 600
+    parallel_execution: true
+    
+  linter_agent:
+    priority: "medium"
+    auto_fix: true
+    style_guide: "pep8"
+    
+  code_reviewer_agent:
+    priority: "high"
+    review_depth: "comprehensive"
+    
+# Knowledge base configuration
+knowledge_base:
+  domains:
+    - "testing_frameworks"
+    - "tdd_practices"
+    - "code_quality_metrics"
+    - "static_analysis"
+    - "performance_testing"
+  
+  update_frequency: "weekly"
+  validation_required: true
+  
+# Communication protocols
+communication:
+  primary_channels:
+    - "workspace/todo.md"
+    - "workspace/activeContext.md"
+    - "workspace/progress.md"
+    
+  notification_level: "standard"
+  escalation_timeout: 900  # 15 minutes
+  
+# Integration settings
+integrations:
+  ci_integration: "enabled"
+  coverage_reporting: "enabled"
+  quality_gates: "enabled"
+  static_analysis: "enabled"
+  
+# Validation rules
+validation:
+  required_tools: ["test.pytest_runner", "test.coverage_reporter", "codegen.test_boilerplate"]
+  required_files: ["runtime.md"]
+  health_check_interval: 300

@@ -10,6 +10,31 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel, Field, validator
 
 
+class CrewSpecificConfig(BaseModel):
+    """Model for crew-specific configuration"""
+    name: str
+    description: str
+    version: str = Field(default="1.0.0")
+    crew_settings: Dict[str, Any] = Field(default_factory=dict)
+    agent_overrides: Dict[str, Any] = Field(default_factory=dict)
+    knowledge_base: Dict[str, Any] = Field(default_factory=dict)
+    communication: Dict[str, Any] = Field(default_factory=dict)
+    integrations: Dict[str, Any] = Field(default_factory=dict)
+    validation: Dict[str, Any] = Field(default_factory=dict)
+
+    @validator('name')
+    def validate_name(cls, v):
+        if not v.strip():
+            raise ValueError("Name cannot be empty")
+        return v.strip().lower()
+
+    @validator('description')
+    def validate_description(cls, v):
+        if not v.strip():
+            raise ValueError("Description cannot be empty")
+        return v.strip()
+
+
 class CrewConfig(BaseModel):
     """Model for crew configuration"""
     goal: str
@@ -266,17 +291,99 @@ class ConfigLoader:
         
         return validation_results
     
+    def load_crew_specific_config(self, crew_name: str) -> Optional[CrewSpecificConfig]:
+        """Load crew-specific configuration"""
+        crew_config_file = self.config_dir.parent / "crews" / crew_name / "crew_config.yaml"
+        
+        if not crew_config_file.exists():
+            return None
+        
+        try:
+            with open(crew_config_file, 'r') as f:
+                crew_data = yaml.safe_load(f)
+            
+            return CrewSpecificConfig(**crew_data)
+        except Exception as e:
+            raise ValueError(f"Invalid crew-specific configuration for '{crew_name}': {e}")
+    
+    def load_all_crew_specific_configs(self) -> Dict[str, CrewSpecificConfig]:
+        """Load all crew-specific configurations"""
+        crews_dir = self.config_dir.parent / "crews"
+        
+        if not crews_dir.exists():
+            return {}
+        
+        crew_configs = {}
+        for crew_dir in crews_dir.iterdir():
+            if crew_dir.is_dir():
+                crew_name = crew_dir.name
+                config = self.load_crew_specific_config(crew_name)
+                if config:
+                    crew_configs[crew_name] = config
+        
+        return crew_configs
+    
+    def validate_crew_specific_configs(self) -> Dict[str, Any]:
+        """Validate all crew-specific configurations"""
+        validation_results = {
+            "valid": True,
+            "errors": [],
+            "warnings": []
+        }
+        
+        try:
+            crew_configs = self.load_all_crew_specific_configs()
+            main_crews = self.load_crews_config()
+            
+            # Check that each main crew has a crew-specific config
+            for crew_name in main_crews:
+                if crew_name not in crew_configs:
+                    validation_results["warnings"].append(
+                        f"Crew '{crew_name}' missing crew-specific configuration"
+                    )
+                else:
+                    # Validate configuration consistency
+                    config = crew_configs[crew_name]
+                    if config.name != crew_name:
+                        validation_results["errors"].append(
+                            f"Crew '{crew_name}' config name mismatch: '{config.name}'"
+                        )
+                    
+                    # Check required tools are available
+                    required_tools = config.validation.get("required_tools", [])
+                    main_crew_tools = main_crews[crew_name].tools
+                    for tool in required_tools:
+                        if tool not in main_crew_tools:
+                            validation_results["warnings"].append(
+                                f"Crew '{crew_name}' requires tool '{tool}' not in main config"
+                            )
+            
+            # Check for orphaned crew-specific configs
+            for crew_name in crew_configs:
+                if crew_name not in main_crews:
+                    validation_results["warnings"].append(
+                        f"Crew-specific config '{crew_name}' has no corresponding main crew"
+                    )
+        
+        except Exception as e:
+            validation_results["valid"] = False
+            validation_results["errors"].append(f"Crew-specific config validation failed: {e}")
+        
+        return validation_results
+
     def get_all_config(self) -> Dict[str, Any]:
         """Get all configuration data"""
         return {
             "crews": self.load_crews_config(),
             "agents": self.load_agents_config(),
+            "crew_specific": self.load_all_crew_specific_configs(),
             "tech_stack": self.load_tech_stack(),
             "system_settings": self.load_system_settings(),
             "workspace": self.get_workspace_config(),
             "communication_channels": self.get_communication_channels(),
             "validation": self.validate_config_integrity(),
-            "workspace_validation": self.validate_workspace_setup()
+            "workspace_validation": self.validate_workspace_setup(),
+            "crew_specific_validation": self.validate_crew_specific_configs()
         }
 
 

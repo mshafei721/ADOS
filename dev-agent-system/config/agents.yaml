@@ -252,3 +252,42 @@ deployment:
         - "./workspace/todo.md"
         - "./workspace/activeContext.md"
         - "./workspace/progress.md"
+
+frontend:
+  - role: "UI Dev Agent"
+    goal: "Create responsive, accessible React/Vue.js components and user interfaces"
+    backstory: "Frontend architect with 10+ years building scalable web applications. Expert in modern JavaScript frameworks and accessibility best practices."
+    tools:
+      - codegen.component_generator
+      - search.frontend_docs
+      - test.e2e_testing
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/frontend"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"
+
+  - role: "Style Agent"
+    goal: "Implement CSS, styling systems, and design consistency across frontend applications"
+    backstory: "Design systems specialist who created component libraries for Fortune 500 companies. Masters CSS-in-JS, Tailwind, and responsive design."
+    tools:
+      - codegen.style_templates
+      - search.design_docs
+      - test.visual_regression
+    llm: "gpt-4"
+    max_iter: 8
+    verbose: true
+    workspace:
+      runtime_folder: "./workspace/frontend"
+      memory_access: "./memory/crew_memory"
+      output_folder: "./output/generated_code"
+      communication_channels:
+        - "./workspace/todo.md"
+        - "./workspace/activeContext.md"
+        - "./workspace/progress.md"

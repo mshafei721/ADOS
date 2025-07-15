@@ -1,0 +1,60 @@
+# Integration Crew Configuration
+# CI/CD and third-party service integration
+
+name: integration
+description: "Integration crew responsible for CI/CD pipelines and third-party service integrations"
+version: "1.0.0"
+
+# Crew-specific configuration
+crew_settings:
+  ci_platform: "github_actions"  # github_actions, jenkins, gitlab_ci
+  deployment_strategy: "blue_green"  # blue_green, rolling, canary
+  api_integration_pattern: "circuit_breaker"  # circuit_breaker, retry, timeout
+  monitoring_approach: "observability"  # logging, metrics, observability
+  
+# Agent configuration overrides
+agent_overrides:
+  cicd_agent:
+    priority: "high"
+    timeout: 900
+    parallel_jobs: 4
+    
+  api_integrator_agent:
+    priority: "medium"
+    rate_limiting: true
+    error_handling: "graceful"
+    
+# Knowledge base configuration
+knowledge_base:
+  domains:
+    - "cicd_pipelines"
+    - "api_integration"
+    - "deployment_automation"
+    - "monitoring_observability"
+    - "event_driven_architecture"
+  
+  update_frequency: "weekly"
+  validation_required: true
+  
+# Communication protocols
+communication:
+  primary_channels:
+    - "workspace/todo.md"
+    - "workspace/activeContext.md"
+    - "workspace/progress.md"
+    
+  notification_level: "standard"
+  escalation_timeout: 600  # 10 minutes
+  
+# Integration settings
+integrations:
+  webhook_support: "enabled"
+  event_streaming: "enabled"
+  service_discovery: "enabled"
+  load_balancing: "enabled"
+  
+# Validation rules
+validation:
+  required_tools: ["codegen.ci_pipeline", "deploy.pipeline_runner", "search.cicd_docs"]
+  required_files: ["runtime.md"]
+  health_check_interval: 300

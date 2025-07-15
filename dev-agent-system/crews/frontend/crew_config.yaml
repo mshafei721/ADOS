@@ -1,0 +1,60 @@
+# Frontend Crew Configuration
+# User interface and frontend application development
+
+name: frontend
+description: "Frontend development crew responsible for building responsive, accessible user interfaces"
+version: "1.0.0"
+
+# Crew-specific configuration
+crew_settings:
+  framework_preference: "react"  # react, vue, angular
+  styling_approach: "tailwind"  # tailwind, styled-components, css-modules
+  component_architecture: "atomic"  # atomic, feature-based, layered
+  accessibility_level: "WCAG2.1"  # WCAG2.0, WCAG2.1, custom
+  
+# Agent configuration overrides
+agent_overrides:
+  ui_dev_agent:
+    priority: "high"
+    timeout: 300
+    code_review_required: true
+    
+  style_agent:
+    priority: "medium"
+    style_guide_enforcement: "strict"
+    responsive_testing: true
+    
+# Knowledge base configuration
+knowledge_base:
+  domains:
+    - "react_patterns"
+    - "component_design"
+    - "accessibility"
+    - "responsive_design"
+    - "performance_optimization"
+  
+  update_frequency: "weekly"
+  validation_required: true
+  
+# Communication protocols
+communication:
+  primary_channels:
+    - "workspace/todo.md"
+    - "workspace/activeContext.md"
+    - "workspace/progress.md"
+    
+  notification_level: "standard"
+  escalation_timeout: 900  # 15 minutes
+  
+# Integration settings
+integrations:
+  design_system: "enabled"
+  storybook: "enabled"
+  testing_framework: "jest"
+  e2e_testing: "playwright"
+  
+# Validation rules
+validation:
+  required_tools: ["codegen.component_generator", "search.frontend_docs", "test.e2e_testing"]
+  required_files: ["runtime.md"]
+  health_check_interval: 300

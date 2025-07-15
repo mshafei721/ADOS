@@ -94,3 +94,19 @@ deployment:
     - codegen.k8s_manifests
     - deploy.docker_builder
     - deploy.k8s_deployer
+
+frontend:
+  goal: "Build responsive, accessible user interfaces and frontend applications"
+  constraints:
+    - React/Vue.js framework preferred
+    - Mobile-first responsive design
+    - WCAG 2.1 accessibility standards
+    - Component-based architecture
+  dependencies:
+    - backend  # For API integration
+    - security  # For authentication UI
+  tools:
+    - codegen.component_generator
+    - codegen.style_templates
+    - search.frontend_docs
+    - test.e2e_testing

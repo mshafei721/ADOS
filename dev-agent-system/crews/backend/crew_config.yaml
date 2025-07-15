@@ -1,0 +1,60 @@
+# Backend Crew Configuration
+# API development and database management
+
+name: backend
+description: "Backend development crew responsible for scalable APIs and database interfaces"
+version: "1.0.0"
+
+# Crew-specific configuration
+crew_settings:
+  api_framework: "fastapi"  # fastapi, flask, django
+  database_preference: "postgresql"  # postgresql, mysql, mongodb
+  orm_choice: "sqlalchemy"  # sqlalchemy, prisma, django-orm
+  architecture_pattern: "microservices"  # monolithic, microservices, hybrid
+  
+# Agent configuration overrides
+agent_overrides:
+  api_agent:
+    priority: "high"
+    timeout: 300
+    async_preferred: true
+    
+  db_agent:
+    priority: "high"
+    migration_strategy: "alembic"
+    connection_pooling: true
+    
+# Knowledge base configuration
+knowledge_base:
+  domains:
+    - "fastapi_patterns"
+    - "sqlalchemy_models"
+    - "async_python"
+    - "api_design"
+    - "database_optimization"
+  
+  update_frequency: "weekly"
+  validation_required: true
+  
+# Communication protocols
+communication:
+  primary_channels:
+    - "workspace/todo.md"
+    - "workspace/activeContext.md"
+    - "workspace/progress.md"
+    
+  notification_level: "standard"
+  escalation_timeout: 600  # 10 minutes
+  
+# Integration settings
+integrations:
+  swagger_docs: "enabled"
+  database_migrations: "alembic"
+  testing_framework: "pytest"
+  monitoring: "prometheus"
+  
+# Validation rules
+validation:
+  required_tools: ["codegen.fastapi_boilerplate", "codegen.sqlalchemy_models", "test.pytest_runner"]
+  required_files: ["runtime.md"]
+  health_check_interval: 300

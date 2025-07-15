@@ -1,0 +1,60 @@
+# Security Crew Configuration
+# Application security and vulnerability management
+
+name: security
+description: "Security crew responsible for authentication, authorization, and vulnerability management"
+version: "1.0.0"
+
+# Crew-specific configuration
+crew_settings:
+  auth_strategy: "jwt"  # jwt, oauth2, session
+  security_framework: "owasp"  # owasp, nist, custom
+  threat_model: "stride"  # stride, pasta, trike
+  compliance_level: "standard"  # basic, standard, enterprise
+  
+# Agent configuration overrides
+agent_overrides:
+  auth_agent:
+    priority: "critical"
+    timeout: 300
+    token_validation: "strict"
+    
+  vuln_agent:
+    priority: "high"
+    scan_frequency: "daily"
+    auto_remediation: false
+    
+# Knowledge base configuration
+knowledge_base:
+  domains:
+    - "owasp_guidelines"
+    - "jwt_oauth2"
+    - "vulnerability_scanning"
+    - "threat_modeling"
+    - "secure_coding"
+  
+  update_frequency: "daily"
+  validation_required: true
+  
+# Communication protocols
+communication:
+  primary_channels:
+    - "workspace/todo.md"
+    - "workspace/activeContext.md"
+    - "workspace/progress.md"
+    
+  notification_level: "high"
+  escalation_timeout: 300  # 5 minutes
+  
+# Integration settings
+integrations:
+  vulnerability_scanner: "enabled"
+  secrets_manager: "enabled"
+  compliance_reporting: "enabled"
+  threat_intelligence: "enabled"
+  
+# Validation rules
+validation:
+  required_tools: ["codegen.auth_boilerplate", "search.owasp_docs", "test.security_scanner"]
+  required_files: ["runtime.md"]
+  health_check_interval: 180

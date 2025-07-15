@@ -1,0 +1,60 @@
+# Orchestrator Crew Configuration
+# System coordination and task decomposition
+
+name: orchestrator
+description: "Master coordination crew responsible for system-wide task decomposition and workflow orchestration"
+version: "1.0.0"
+
+# Crew-specific configuration
+crew_settings:
+  coordination_mode: "distributed"  # distributed, centralized, hybrid
+  task_decomposition_strategy: "recursive"  # recursive, parallel, sequential
+  max_concurrent_tasks: 10
+  dependency_resolution: "topological"
+  
+# Agent configuration overrides
+agent_overrides:
+  task_decomposer:
+    priority: "critical"
+    timeout: 300  # 5 minutes
+    retry_count: 3
+    
+  system_monitor:
+    priority: "high"
+    monitoring_interval: 30  # seconds
+    alert_thresholds:
+      memory_usage: 80
+      cpu_usage: 85
+      
+# Knowledge base configuration
+knowledge_base:
+  domains:
+    - "system_design"
+    - "task_decomposition"
+    - "project_management"
+    - "workflow_orchestration"
+  
+  update_frequency: "daily"
+  validation_required: true
+  
+# Communication protocols
+communication:
+  primary_channels:
+    - "workspace/todo.md"
+    - "workspace/activeContext.md"
+    - "workspace/progress.md"
+    
+  notification_level: "verbose"
+  escalation_timeout: 600  # 10 minutes
+  
+# Integration settings
+integrations:
+  memory_backend: "local"
+  logging_level: "INFO"
+  metrics_collection: true
+  
+# Validation rules
+validation:
+  required_tools: ["task_decomposer", "memory_writer", "prd_parser", "system_monitor"]
+  required_files: ["runtime.md"]
+  health_check_interval: 300

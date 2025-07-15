@@ -1,0 +1,60 @@
+# Deployment Crew Configuration
+# Container deployment and infrastructure management
+
+name: deployment
+description: "Deployment crew responsible for reliable application deployment across environments"
+version: "1.0.0"
+
+# Crew-specific configuration
+crew_settings:
+  container_platform: "docker"  # docker, podman, containerd
+  orchestration: "kubernetes"  # kubernetes, docker-swarm, nomad
+  infrastructure_approach: "iac"  # iac, manual, hybrid
+  deployment_environment: "multi_stage"  # single, multi_stage, multi_region
+  
+# Agent configuration overrides
+agent_overrides:
+  docker_agent:
+    priority: "high"
+    timeout: 600
+    image_optimization: true
+    
+  kubernetes_agent:
+    priority: "high"
+    scaling_strategy: "hpa"
+    resource_limits: "enforced"
+    
+# Knowledge base configuration
+knowledge_base:
+  domains:
+    - "docker_best_practices"
+    - "kubernetes_deployment"
+    - "infrastructure_as_code"
+    - "cloud_platforms"
+    - "deployment_automation"
+  
+  update_frequency: "weekly"
+  validation_required: true
+  
+# Communication protocols
+communication:
+  primary_channels:
+    - "workspace/todo.md"
+    - "workspace/activeContext.md"
+    - "workspace/progress.md"
+    
+  notification_level: "standard"
+  escalation_timeout: 900  # 15 minutes
+  
+# Integration settings
+integrations:
+  cloud_provider: "agnostic"
+  secrets_management: "enabled"
+  monitoring_stack: "enabled"
+  backup_strategy: "enabled"
+  
+# Validation rules
+validation:
+  required_tools: ["codegen.dockerfile", "codegen.k8s_manifests", "deploy.docker_builder"]
+  required_files: ["runtime.md"]
+  health_check_interval: 300

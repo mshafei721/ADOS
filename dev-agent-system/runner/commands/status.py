@@ -16,6 +16,7 @@ from rich.columns import Columns
 
 from ..utils.config import get_config_manager
 from ..utils.logger import get_logger
+from orchestrator.main import ADOSOrchestrator
 
 logger = get_logger(__name__)
 console = Console()
@@ -40,13 +41,57 @@ def status_command(
     dir_status = config_manager.check_directory_structure()
     is_ados_project = config_manager.is_ados_project()
     config_files = _check_configuration_files(config_manager)
+    orchestrator_status = _check_orchestrator_status()
     
     if json_output:
         _output_json_status(project_info, dir_status, is_ados_project, config_files)
     else:
-        _output_formatted_status(project_info, dir_status, is_ados_project, config_files, detailed)
+        _output_formatted_status(project_info, dir_status, is_ados_project, config_files, orchestrator_status, detailed)
     
     logger.debug("Status command completed")
+
+
+def _check_orchestrator_status() -> Dict[str, any]:
+    """
+    Check the orchestrator system status.
+    
+    Returns:
+        Dictionary with orchestrator status information
+    """
+    try:
+        # Attempt to initialize orchestrator
+        orchestrator = ADOSOrchestrator()
+        success = orchestrator.initialize()
+        
+        if success:
+            status = orchestrator.get_system_status()
+            orchestrator.shutdown()
+            return {
+                "available": True,
+                "initialized": True,
+                "crews": status['crews'],
+                "agents": status['agents'],
+                "crew_distribution": status['crew_distribution'],
+                "error": None
+            }
+        else:
+            return {
+                "available": True,
+                "initialized": False,
+                "crews": {"total": 0, "initialized": 0},
+                "agents": {"total": 0, "initialized": 0},
+                "crew_distribution": {},
+                "error": "Failed to initialize orchestrator"
+            }
+    except Exception as e:
+        return {
+            "available": False,
+            "initialized": False,
+            "crews": {"total": 0, "initialized": 0},
+            "agents": {"total": 0, "initialized": 0},
+            "crew_distribution": {},
+            "error": str(e)
+        }
 
 
 def _check_configuration_files(config_manager) -> Dict[str, bool]:
@@ -125,6 +170,7 @@ def _output_formatted_status(
     dir_status: dict,
     is_ados_project: bool,
     config_files: dict,
+    orchestrator_status: dict,
     detailed: bool
 ):
     """
@@ -208,6 +254,29 @@ def _output_formatted_status(
             config_table.add_row(filename, f"[{color}]{status}[/{color}]", desc)
         
         console.print(config_table)
+    
+    # Orchestrator Status
+    if orchestrator_status["available"]:
+        console.print(f"\n[bold]Orchestrator System:[/bold]")
+        
+        if orchestrator_status["initialized"]:
+            console.print("✓ [green]Orchestrator initialized successfully[/green]")
+            console.print(f"  • Crews: {orchestrator_status['crews']['initialized']}/{orchestrator_status['crews']['total']}")
+            console.print(f"  • Agents: {orchestrator_status['agents']['initialized']}/{orchestrator_status['agents']['total']}")
+            
+            if detailed:
+                console.print("  • Crew Distribution:")
+                for crew_name, agent_count in orchestrator_status['crew_distribution'].items():
+                    console.print(f"    - {crew_name}: {agent_count} agents")
+        else:
+            console.print("✗ [red]Orchestrator failed to initialize[/red]")
+            if orchestrator_status["error"]:
+                console.print(f"  Error: {orchestrator_status['error']}")
+    else:
+        console.print(f"\n[bold]Orchestrator System:[/bold]")
+        console.print("✗ [red]Orchestrator not available[/red]")
+        if orchestrator_status["error"]:
+            console.print(f"  Error: {orchestrator_status['error']}")
     
     # Summary
     dir_valid = sum(1 for exists in dir_status.values() if exists)

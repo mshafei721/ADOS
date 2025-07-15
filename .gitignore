@@ -179,3 +179,7 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# ADOS Development Folders
+.claude/      # Claude configuration and cached prompts
+.serena/      # Serena MCP cache and project metadata
+.devdocs/     # All internal development documentation and guides

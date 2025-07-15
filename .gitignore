@@ -183,3 +183,7 @@ cython_debug/
 .claude/      # Claude configuration and cached prompts
 .serena/      # Serena MCP cache and project metadata
 .devdocs/     # All internal development documentation and guides
+.devdocs/memory-bank/CLAUDE.md
+/.devdocs/memory-bank
+/.serena
+/.claude

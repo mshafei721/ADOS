@@ -1,0 +1,309 @@
+# ADOS - AI Dev Orchestration System
+# Comprehensive .gitignore for Python AI/ML development
+
+# ========================================
+# Python Core
+# ========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ========================================
+# Virtual Environments
+# ========================================
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# ========================================
+# IDE and Editor Files
+# ========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ========================================
+# Security and Credentials
+# ========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+secrets/
+keys/
+certs/
+credentials/
+tokens/
+
+# ========================================
+# AI/ML Specific
+# ========================================
+# Model files
+*.pkl
+*.joblib
+*.h5
+*.pb
+*.onnx
+*.tflite
+*.pt
+*.pth
+*.safetensors
+models/
+checkpoints/
+weights/
+
+# Vector databases
+.chroma/
+chromadb/
+vector_db/
+embeddings/
+*.faiss
+*.index
+
+# Dataset files
+datasets/
+data/raw/
+data/processed/
+*.csv
+*.json
+*.parquet
+*.arrow
+*.hdf5
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# ========================================
+# ADOS Specific
+# ========================================
+# Output directories
+output/
+logs/
+reports/
+generated_code/
+user-app/
+
+# Memory and cache
+memory/vector_db/
+memory/cache/
+.cache/
+crew_memory/
+global_kb/
+
+# Configuration overrides
+config/local/
+config/production/
+*.local.yaml
+*.local.json
+
+# Runtime files
+*.pid
+*.lock
+.running
+.status
+
+# ========================================
+# Testing
+# ========================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# ========================================
+# Linting and Formatting
+# ========================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.black
+.isort.cfg
+
+# ========================================
+# Documentation
+# ========================================
+docs/_build/
+docs/build/
+site/
+.readthedocs.yaml
+
+# ========================================
+# Deployment
+# ========================================
+# Docker
+.dockerignore
+*.dockerfile
+docker-compose.override.yml
+.docker/
+
+# Kubernetes
+k8s/secrets/
+*.kubeconfig
+
+# Cloud deployment
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# ========================================
+# Monitoring and Profiling
+# ========================================
+.profiling/
+*.prof
+*.profile
+monitoring/
+metrics/
+
+# ========================================
+# Temporary Files
+# ========================================
+*.tmp
+*.temp
+*.swp
+*.bak
+*.backup
+*~
+.temporary/
+temp/
+tmp/
+
+# ========================================
+# Log Files
+# ========================================
+*.log
+*.log.*
+logs/
+log/
+
+# ========================================
+# Database Files
+# ========================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# ========================================
+# Package Manager Files
+# ========================================
+# UV
+uv.lock
+.uv/
+
+# Pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Pipenv
+Pipfile.lock
+
+# Poetry
+poetry.lock
+
+# ========================================
+# Operating System
+# ========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ========================================
+# Development Tools
+# ========================================
+.pre-commit-config.yaml
+.github/workflows/local-*
+.vscode/settings.json
+.vscode/launch.json
+
+# ========================================
+# Custom ADOS Exclusions
+# ========================================
+# Add project-specific exclusions here
+# crew_outputs/
+# agent_logs/
+# custom_tools/
+
+# ========================================
+# Keep These Files
+# ========================================
+# Use ! to force include important files
+!.gitkeep
+!.env.example
+!README.md
+!LICENSE
+!requirements.txt
+!pyproject.toml

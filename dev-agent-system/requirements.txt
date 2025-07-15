@@ -1,0 +1,56 @@
+# ADOS - AI Dev Orchestration System
+# Production dependencies with pinned versions for reproducible deployments
+# Generated from pyproject.toml - Keep in sync with project dependencies
+
+# Core AI Orchestration Framework
+crewai[tools]>=0.1.0,<1.0.0
+
+# OpenAI API Client
+openai>=1.0.0,<2.0.0
+
+# Vector Database
+chromadb>=1.0.0,<2.0.0
+
+# CLI Framework
+typer>=0.9.0,<1.0.0
+
+# Data Validation
+pydantic>=2.0.0,<3.0.0
+
+# Environment Management
+python-dotenv>=1.0.0,<2.0.0
+
+# Configuration Management
+pyyaml>=6.0.0,<7.0.0
+
+# Terminal UI and Formatting
+rich>=13.0.0,<14.0.0
+
+# HTTP Client
+httpx>=0.24.0,<1.0.0
+
+# Logging
+loguru>=0.7.0,<1.0.0
+
+# Development Dependencies (install with: pip install -e .[dev])
+# pytest>=7.0.0,<8.0.0
+# pytest-asyncio>=0.21.0,<1.0.0
+# pytest-cov>=4.0.0,<5.0.0
+# black>=23.0.0,<24.0.0
+# ruff>=0.1.0,<1.0.0
+# mypy>=1.0.0,<2.0.0
+# pre-commit>=3.0.0,<4.0.0
+# isort>=5.12.0,<6.0.0
+
+# Installation Instructions:
+# 1. Create virtual environment: python -m venv .venv
+# 2. Activate: source .venv/bin/activate (Linux/Mac) or .venv\Scripts\activate (Windows)
+# 3. Install production: pip install -r requirements.txt
+# 4. Install development: pip install -e .[dev]
+# 5. Alternative (preferred): uv install && uv sync
+
+# Compatibility Notes:
+# - Python >=3.10,<3.14 required (CrewAI constraint)
+# - ChromaDB requires SQLite 3.35+
+# - OpenAI SDK v1.x for latest features
+# - All versions tested for compatibility on 2025-07-15

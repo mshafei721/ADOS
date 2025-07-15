@@ -59,8 +59,8 @@ class KnowledgeBaseValidator(BaseValidator):
         # Markdown structure requirements
         self.markdown_requirements = {
             'headers': r'^#',
-            'content': r'\\w+',
-            'structure': r'^#\\s+.+$'
+            'content': r'\w+',
+            'structure': r'^#\s+.+$'
         }
     
     def validate(self) -> bool:

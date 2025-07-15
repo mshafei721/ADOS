@@ -93,6 +93,10 @@ class ConfigLoader:
         with open(crews_file, 'r') as f:
             crews_data = yaml.safe_load(f)
         
+        # Extract crews from root 'crews' key
+        if 'crews' in crews_data:
+            crews_data = crews_data['crews']
+        
         # Validate each crew configuration
         crews = {}
         for crew_name, crew_data in crews_data.items():
@@ -120,6 +124,10 @@ class ConfigLoader:
         
         with open(agents_file, 'r') as f:
             agents_data = yaml.safe_load(f)
+        
+        # Extract agents from root 'agents' key
+        if 'agents' in agents_data:
+            agents_data = agents_data['agents']
         
         # Validate agent configurations by crew
         agents = {}
@@ -370,6 +378,14 @@ class ConfigLoader:
             validation_results["errors"].append(f"Crew-specific config validation failed: {e}")
         
         return validation_results
+
+    def load_crews(self) -> Dict[str, CrewConfig]:
+        """Alias for load_crews_config for backward compatibility"""
+        return self.load_crews_config()
+    
+    def load_agents(self) -> Dict[str, List[AgentConfig]]:
+        """Alias for load_agents_config for backward compatibility"""
+        return self.load_agents_config()
 
     def get_all_config(self) -> Dict[str, Any]:
         """Get all configuration data"""

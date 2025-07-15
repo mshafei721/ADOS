@@ -1,112 +1,127 @@
 # ADOS Crew Configuration
 # This file defines all crews in the ADOS system with their goals, constraints, dependencies, and tools
 
-orchestrator:
-  goal: "Master coordination and task decomposition for the entire ADOS system"
-  constraints:
-    - Must maintain global system awareness
-    - Prioritize task dependencies and parallel execution
-    - Follow PLAN.md for all major decisions
-    - Update memory bank for persistent state
-  dependencies: []
-  tools:
-    - task_decomposer
-    - memory_writer
-    - prd_parser
-    - system_monitor
+crews:
+  orchestrator:
+    goal: "Master coordination and task decomposition for the entire ADOS system"
+    backstory: "The orchestrator crew leads the entire ADOS system, providing coordination and strategic oversight for all development activities."
+    agents: ["TaskDecomposer", "WorkflowManager"]
+    constraints:
+      - Must maintain global system awareness
+      - Prioritize task dependencies and parallel execution
+      - Follow PLAN.md for all major decisions
+      - Update memory bank for persistent state
+    dependencies: []
+    tools:
+      - task_decomposer
+      - memory_writer
+      - prd_parser
+      - system_monitor
 
-backend:
-  goal: "Provide scalable, testable APIs and database interfaces that serve frontend and external consumers"
-  constraints:
-    - RESTful by default, GraphQL if needed
-    - Use async Python (FastAPI or Flask)
-    - DB interactions must use ORM (SQLAlchemy)
-    - Follow 12-factor app principles
-  dependencies:
-    - security  # For auth middleware
-    - orchestrator  # For API specifications
-  tools:
-    - codegen.fastapi_boilerplate
-    - codegen.sqlalchemy_models
-    - search.python_docs
-    - test.pytest_runner
+  backend:
+    goal: "Provide scalable, testable APIs and database interfaces that serve frontend and external consumers"
+    backstory: "The backend crew specializes in server-side development, databases, and API design to power the entire application."
+    agents: ["APIAgent", "DatabaseAgent"]
+    constraints:
+      - RESTful by default, GraphQL if needed
+      - Use async Python (FastAPI or Flask)
+      - DB interactions must use ORM (SQLAlchemy)
+      - Follow 12-factor app principles
+    dependencies:
+      - security  # For auth middleware
+      - orchestrator  # For API specifications
+    tools:
+      - codegen.fastapi_boilerplate
+      - codegen.sqlalchemy_models
+      - search.python_docs
+      - test.pytest_runner
 
-security:
-  goal: "Ensure application security through authentication, authorization, and vulnerability management"
-  constraints:
-    - Implement JWT/OAuth2 standards
-    - Follow OWASP security guidelines
-    - Regular security scanning required
-    - Zero-trust architecture principles
-  dependencies:
-    - orchestrator  # For security requirements
-  tools:
-    - codegen.auth_boilerplate
-    - search.owasp_docs
-    - test.security_scanner
-    - deploy.secrets_manager
+  security:
+    goal: "Ensure application security through authentication, authorization, and vulnerability management"
+    backstory: "The security crew protects the application and users through comprehensive security measures and threat mitigation."
+    agents: ["AuthAgent", "VulnAgent"]
+    constraints:
+      - Implement JWT/OAuth2 standards
+      - Follow OWASP security guidelines
+      - Regular security scanning required
+      - Zero-trust architecture principles
+    dependencies:
+      - orchestrator  # For security requirements
+    tools:
+      - codegen.auth_boilerplate
+      - search.owasp_docs
+      - test.security_scanner
+      - deploy.secrets_manager
 
-quality:
-  goal: "Maintain code quality through testing, linting, and code review processes"
-  constraints:
-    - 80% minimum code coverage
-    - All code must pass linting rules
-    - Follow project style guides
-    - Automated quality gates required
-  dependencies:
-    - backend  # For API testing
-    - security  # For security testing
-    - integration  # For integration testing
-  tools:
-    - test.pytest_runner
-    - test.coverage_reporter
-    - codegen.test_boilerplate
-    - search.testing_best_practices
+  quality:
+    goal: "Maintain code quality through testing, linting, and code review processes"
+    backstory: "The quality crew ensures high standards through comprehensive testing, code reviews, and automated quality checks."
+    agents: ["UnitTester", "Linter", "CodeReviewer"]
+    constraints:
+      - 80% minimum code coverage
+      - All code must pass linting rules
+      - Follow project style guides
+      - Automated quality gates required
+    dependencies:
+      - backend  # For API testing
+      - security  # For security testing
+      - integration  # For integration testing
+    tools:
+      - test.pytest_runner
+      - test.coverage_reporter
+      - codegen.test_boilerplate
+      - search.testing_best_practices
 
-integration:
-  goal: "Enable seamless CI/CD and third-party integrations"
-  constraints:
-    - CI/CD pipeline must be automated
-    - Support multiple deployment environments
-    - API versioning required
-    - Rollback capabilities mandatory
-  dependencies:
-    - quality  # For test results
-    - deployment  # For deployment targets
-  tools:
-    - codegen.ci_pipeline
-    - codegen.api_client
-    - search.cicd_docs
-    - deploy.pipeline_runner
+  integration:
+    goal: "Enable seamless CI/CD and third-party integrations"
+    backstory: "The integration crew connects systems and automates development workflows for efficient delivery."
+    agents: ["CIAgent", "APIIntegrator"]
+    constraints:
+      - CI/CD pipeline must be automated
+      - Support multiple deployment environments
+      - API versioning required
+      - Rollback capabilities mandatory
+    dependencies:
+      - quality  # For test results
+      - deployment  # For deployment targets
+    tools:
+      - codegen.ci_pipeline
+      - codegen.api_client
+      - search.cicd_docs
+      - deploy.pipeline_runner
 
-deployment:
-  goal: "Deploy applications reliably across different environments"
-  constraints:
-    - Container-first approach (Docker)
-    - Support Kubernetes deployments
-    - Infrastructure as Code (IaC)
-    - Zero-downtime deployments
-  dependencies:
-    - integration  # For CI/CD pipeline
-    - security  # For secrets management
-  tools:
-    - codegen.dockerfile
-    - codegen.k8s_manifests
-    - deploy.docker_builder
-    - deploy.k8s_deployer
+  deployment:
+    goal: "Deploy applications reliably across different environments"
+    backstory: "The deployment crew manages containerization, orchestration, and cloud infrastructure for reliable application delivery."
+    agents: ["DockerAgent", "CloudAgent"]
+    constraints:
+      - Container-first approach (Docker)
+      - Support Kubernetes deployments
+      - Infrastructure as Code (IaC)
+      - Zero-downtime deployments
+    dependencies:
+      - integration  # For CI/CD pipeline
+      - security  # For secrets management
+    tools:
+      - codegen.dockerfile
+      - codegen.k8s_manifests
+      - deploy.docker_builder
+      - deploy.k8s_deployer
 
-frontend:
-  goal: "Build responsive, accessible user interfaces and frontend applications"
-  constraints:
-    - React/Vue.js framework preferred
-    - Mobile-first responsive design
-    - WCAG 2.1 accessibility standards
-    - Component-based architecture
-  dependencies:
-    - backend  # For API integration
-    - security  # For authentication UI
-  tools:
-    - codegen.component_generator
-    - codegen.style_templates
-    - search.frontend_docs
-    - test.e2e_testing
+  frontend:
+    goal: "Build responsive, accessible user interfaces and frontend applications"
+    backstory: "The frontend crew creates user-facing applications with focus on usability, accessibility, and modern design."
+    agents: ["UIDevAgent", "StyleAgent"]
+    constraints:
+      - React/Vue.js framework preferred
+      - Mobile-first responsive design
+      - WCAG 2.1 accessibility standards
+      - Component-based architecture
+    dependencies:
+      - backend  # For API integration
+      - security  # For authentication UI
+    tools:
+      - codegen.component_generator
+      - codegen.style_templates
+      - search.frontend_docs
+      - test.e2e_testing

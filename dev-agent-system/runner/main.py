@@ -23,7 +23,8 @@ from .commands.version import version_command
 app = typer.Typer(
     name="ados",
     help="ADOS - AI Dev Orchestration System",
-    no_args_is_help=True
+    no_args_is_help=True,
+    add_completion=False
 )
 
 # Rich console for enhanced output
@@ -64,12 +65,36 @@ app.command(name="run", help="Execute ADOS orchestration")(run_command)
 app.command(name="status", help="Show current system status")(status_command)
 app.command(name="version", help="Show version information")(version_command)
 
+@app.command(name="help", help="Show help information")
+def help_command():
+    """Show help information for the ADOS CLI"""
+    console.print("""
+[bold]ADOS - AI Dev Orchestration System[/bold]
+
+[green]Usage:[/green] ados [OPTIONS] COMMAND [ARGS]...
+
+[green]Options:[/green]
+  -v, --verbose         Enable verbose logging
+  --log-file TEXT       Path to log file
+  --help               Show this message and exit.
+
+[green]Commands:[/green]
+  init      Initialize a new ADOS project workspace
+  run       Execute ADOS orchestration
+  status    Show current system status
+  version   Show version information
+  help      Show help information
+""")
+
 
 def cli_main():
     """
     Main entry point for the CLI application.
     """
     try:
+        # Check for -h flag and convert to --help
+        if len(sys.argv) > 1 and sys.argv[1] == '-h':
+            sys.argv[1] = '--help'
         app()
     except KeyboardInterrupt:
         console.print("\n[yellow]Operation cancelled by user[/yellow]")

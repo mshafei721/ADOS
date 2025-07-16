@@ -9,6 +9,10 @@ from typing import Dict, List, Optional, Any
 from crewai import Agent
 
 from config.config_loader import ConfigLoader, AgentConfig
+from tools.system_monitor import system_monitor, get_system_status, monitor_crew, get_alerts
+from tools.memory_writer import memory_writer, write_task_memory, write_crew_memory, search_memory, get_memory_status
+from tools.prd_parser import prd_parser, parse_prd_content, extract_tasks_from_prd, validate_prd_content
+from tools.task_decomposer import task_decomposer, decompose_task, get_task_complexity, get_crew_assignments
 
 
 class AgentFactory:
@@ -22,17 +26,36 @@ class AgentFactory:
         # Cache for created agents
         self._agent_cache: Dict[str, Agent] = {}
         
-        # Mock tools registry (in real implementation, this would load actual tools)
-        self._mock_tools_registry = self._setup_mock_tools()
+        # Functional tools registry
+        self._tools_registry = self._setup_functional_tools()
     
-    def _setup_mock_tools(self) -> Dict[str, Any]:
-        """Setup mock tools registry for demonstration"""
-        # In a real implementation, this would load actual tool implementations
+    def _setup_functional_tools(self) -> Dict[str, Any]:
+        """Setup functional tools registry"""
         return {
-            "task_decomposer": "MockTaskDecomposer",
-            "memory_writer": "MockMemoryWriter",
-            "prd_parser": "MockPRDParser",
-            "system_monitor": "MockSystemMonitor",
+            # Core orchestrator tools
+            "system_monitor": get_system_status,
+            "memory_writer": write_task_memory,
+            "prd_parser": parse_prd_content,
+            "task_decomposer": decompose_task,
+            
+            # System monitoring tools
+            "monitor_crew": monitor_crew,
+            "get_alerts": get_alerts,
+            
+            # Memory tools
+            "write_crew_memory": write_crew_memory,
+            "search_memory": search_memory,
+            "get_memory_status": get_memory_status,
+            
+            # PRD parsing tools
+            "extract_tasks_from_prd": extract_tasks_from_prd,
+            "validate_prd_content": validate_prd_content,
+            
+            # Task decomposition tools
+            "get_task_complexity": get_task_complexity,
+            "get_crew_assignments": get_crew_assignments,
+            
+            # Legacy mock tools (to be replaced gradually)
             "codegen.fastapi_boilerplate": "MockFastAPIBoilerplate",
             "codegen.sqlalchemy_models": "MockSQLAlchemyModels",
             "codegen.auth_boilerplate": "MockAuthBoilerplate",
@@ -112,15 +135,18 @@ class AgentFactory:
         tools = []
         
         for tool_name in tool_names:
-            if tool_name in self._mock_tools_registry:
-                # In a real implementation, this would instantiate actual tools
-                # For now, we'll just log the tool name
-                self.logger.debug(f"Mock tool loaded: {tool_name}")
-                # tools.append(self._mock_tools_registry[tool_name])
+            if tool_name in self._tools_registry:
+                tool = self._tools_registry[tool_name]
+                
+                # Only add functional tools (not mock strings)
+                if callable(tool):
+                    tools.append(tool)
+                    self.logger.debug(f"Functional tool loaded: {tool_name}")
+                else:
+                    self.logger.debug(f"Mock tool referenced: {tool_name}")
             else:
                 self.logger.warning(f"Unknown tool: {tool_name}")
         
-        # Return empty list for now (no actual tools implemented)
         return tools
     
     def get_agent(self, agent_name: str) -> Optional[Agent]:
@@ -190,8 +216,10 @@ class AgentFactory:
                 validation_results["warnings"].append("No tools specified for agent")
             else:
                 for tool_name in agent_config.tools:
-                    if tool_name not in self._mock_tools_registry:
+                    if tool_name not in self._tools_registry:
                         validation_results["warnings"].append(f"Unknown tool: {tool_name}")
+                    elif not callable(self._tools_registry[tool_name]):
+                        validation_results["warnings"].append(f"Tool not yet implemented: {tool_name}")
             
             # Validate workspace configuration
             if agent_config.workspace:

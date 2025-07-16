@@ -18,6 +18,7 @@ from orchestrator.crew_factory import CrewFactory
 from orchestrator.task_decomposer import TaskDecomposer
 from orchestrator.memory_coordinator import MemoryCoordinator
 from orchestrator.logging_service import LoggingService, initialize_logging
+from crews.orchestrator.orchestrator_crew import OrchestratorCrew
 
 
 class ADOSOrchestrator:
@@ -30,6 +31,7 @@ class ADOSOrchestrator:
         self.crew_factory = CrewFactory(self.config_loader, self.agent_factory)
         self.task_decomposer = TaskDecomposer()
         self.memory_coordinator = MemoryCoordinator(self.config_loader)
+        self.orchestrator_crew = OrchestratorCrew(self.config_loader, self.agent_factory)
         
         # Configuration data
         self.crews_config: Dict[str, CrewConfig] = {}
@@ -409,3 +411,88 @@ class ADOSOrchestrator:
             validation_results["errors"].append(f"System validation failed: {e}")
         
         return validation_results
+    
+    def intelligent_task_dispatch(self, task_description: str, priority: str = "medium") -> Dict[str, Any]:
+        """Use orchestrator crew for intelligent task dispatch"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        return self.orchestrator_crew.intelligent_task_dispatch(task_description, priority)
+    
+    def get_crew_health(self, crew_name: str) -> Dict[str, Any]:
+        """Get health status of a specific crew"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        return self.orchestrator_crew.monitor_crew_health(crew_name)
+    
+    def get_all_crews_health(self) -> Dict[str, Dict[str, Any]]:
+        """Get health status of all crews"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        return self.orchestrator_crew.monitor_all_crews()
+    
+    def get_orchestrator_overview(self) -> Dict[str, Any]:
+        """Get comprehensive orchestrator overview"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        system_status = self.get_system_status()
+        orchestrator_overview = self.orchestrator_crew.get_system_overview()
+        
+        return {
+            "system_status": system_status,
+            "orchestrator_crew": orchestrator_overview,
+            "integration_status": "active"
+        }
+    
+    def process_task_queue(self) -> List[Dict[str, Any]]:
+        """Process queued tasks using orchestrator crew"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        return self.orchestrator_crew.process_task_queue()
+    
+    def complete_task(self, crew_name: str, success: bool = True):
+        """Mark a task as completed and update crew metrics"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        self.orchestrator_crew.complete_task(crew_name, success)
+    
+    def get_task_queue_status(self) -> Dict[str, Any]:
+        """Get task queue status"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        return self.orchestrator_crew.get_task_queue_status()
+    
+    def perform_health_check(self) -> Dict[str, Any]:
+        """Perform comprehensive health check"""
+        if not self.is_initialized:
+            return {
+                "status": "not_initialized",
+                "timestamp": "N/A",
+                "error": "Orchestrator not initialized"
+            }
+        
+        # Get orchestrator crew health check
+        orchestrator_health = self.orchestrator_crew.health_check()
+        
+        # Get system validation
+        system_validation = self.validate_system()
+        
+        # Combine results
+        overall_status = "healthy"
+        if orchestrator_health["status"] == "critical" or not system_validation["configuration_valid"]:
+            overall_status = "critical"
+        elif orchestrator_health["status"] == "warning" or system_validation["errors"]:
+            overall_status = "warning"
+        
+        return {
+            "overall_status": overall_status,
+            "orchestrator_crew_health": orchestrator_health,
+            "system_validation": system_validation,
+            "timestamp": orchestrator_health["timestamp"]
+        }

@@ -17,6 +17,23 @@ This file serves as the active task queue for agent crews during runtime. Tasks 
 <!-- Runtime tasks for orchestrator agents -->
 <!-- Each task references ./workspace/orchestrator/ for crew-specific context -->
 
+- [x] **Phase 2 - Task 2.4: Logging Infrastructure Setup**
+  - [x] Create JSON logging formatters with structured data support
+  - [x] Implement central logging service with configuration management  
+  - [x] Add log rotation handlers with compression support
+  - [x] Build performance monitoring with metrics collection
+  - [x] Develop crew-specific logging utilities
+  - [x] Create comprehensive test suite
+  - [x] Update orchestrator/main.py to use new logging service
+  - **Status**: ✅ COMPLETED (2025-07-16)
+  - **Files Created**: 
+    - `tools/logging/formatters.py`
+    - `tools/logging/handlers.py`
+    - `tools/logging/crew_logger.py`
+    - `orchestrator/logging_service.py`
+    - `orchestrator/performance_monitor.py`
+    - `tests/test_logging_infrastructure.py`
+
 ### Backend Crew Tasks
 <!-- Runtime tasks for backend development -->
 <!-- Each task references ./workspace/backend/ for crew-specific context -->

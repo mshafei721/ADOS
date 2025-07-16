@@ -17,6 +17,7 @@ from orchestrator.agent_factory import AgentFactory
 from orchestrator.crew_factory import CrewFactory
 from orchestrator.task_decomposer import TaskDecomposer
 from orchestrator.memory_coordinator import MemoryCoordinator
+from orchestrator.logging_service import LoggingService, initialize_logging
 
 
 class ADOSOrchestrator:
@@ -38,21 +39,27 @@ class ADOSOrchestrator:
         
         # System state
         self.is_initialized = False
-        self.logger = logging.getLogger(__name__)
         
-        # Setup basic logging
+        # Initialize logging service
+        self.logging_service = LoggingService(self.config_loader)
         self._setup_logging()
+        
+        # Get logger after logging service is initialized
+        self.logger = self.logging_service.get_logger("ados_orchestrator")
     
     def _setup_logging(self):
-        """Setup basic logging configuration"""
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.StreamHandler(),
-                logging.FileHandler('ados_orchestrator.log')
-            ]
-        )
+        """Setup advanced logging configuration using LoggingService"""
+        if not self.logging_service.initialize():
+            # Fallback to basic logging if service fails
+            logging.basicConfig(
+                level=logging.INFO,
+                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                handlers=[
+                    logging.StreamHandler(),
+                    logging.FileHandler('ados_orchestrator.log')
+                ]
+            )
+            print("Warning: Logging service initialization failed, using basic logging")
     
     def initialize(self) -> bool:
         """Initialize the orchestrator by loading configurations and creating crews"""
@@ -214,7 +221,8 @@ class ADOSOrchestrator:
                 for crew_name in self.crews_config.keys()
             },
             "configuration_status": self.config_loader.validate_config_integrity(),
-            "memory_status": self.memory_coordinator.get_memory_status() if hasattr(self, 'memory_coordinator') else None
+            "memory_status": self.memory_coordinator.get_memory_status() if hasattr(self, 'memory_coordinator') else None,
+            "logging_status": self.logging_service.get_logging_status() if hasattr(self, 'logging_service') else None
         }
     
     def execute_simple_task(self, task_description: str, crew_name: str = "orchestrator") -> Optional[str]:
@@ -284,6 +292,10 @@ class ADOSOrchestrator:
         self.is_initialized = False
         
         self.logger.info("ADOS Orchestrator shutdown complete")
+        
+        # Shutdown logging service
+        if hasattr(self, 'logging_service'):
+            self.logging_service.shutdown()
     
     def decompose_and_execute_task(self, task_description: str) -> Dict[str, Any]:
         """Decompose a task and execute it using appropriate crews"""

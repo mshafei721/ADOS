@@ -15,6 +15,8 @@ from crewai.project import CrewBase
 from config.config_loader import ConfigLoader, AgentConfig, CrewConfig
 from orchestrator.agent_factory import AgentFactory
 from orchestrator.crew_factory import CrewFactory
+from orchestrator.task_decomposer import TaskDecomposer
+from orchestrator.memory_coordinator import MemoryCoordinator
 
 
 class ADOSOrchestrator:
@@ -25,6 +27,8 @@ class ADOSOrchestrator:
         self.config_loader = ConfigLoader(config_dir)
         self.agent_factory = AgentFactory(self.config_loader)
         self.crew_factory = CrewFactory(self.config_loader, self.agent_factory)
+        self.task_decomposer = TaskDecomposer()
+        self.memory_coordinator = MemoryCoordinator(self.config_loader)
         
         # Configuration data
         self.crews_config: Dict[str, CrewConfig] = {}
@@ -66,6 +70,9 @@ class ADOSOrchestrator:
             
             # Initialize crews
             self._initialize_crews()
+            
+            # Initialize memory coordinator
+            self._initialize_memory()
             
             self.is_initialized = True
             self.logger.info("ADOS Orchestrator initialized successfully")
@@ -138,6 +145,20 @@ class ADOSOrchestrator:
         
         self.logger.info(f"Successfully initialized {len(self.initialized_crews)} crews")
     
+    def _initialize_memory(self):
+        """Initialize memory coordinator"""
+        self.logger.info("Initializing memory coordinator...")
+        
+        try:
+            if not self.memory_coordinator.initialize_memory():
+                raise RuntimeError("Memory coordinator initialization failed")
+            
+            self.logger.info("Memory coordinator initialized successfully")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to initialize memory coordinator: {e}")
+            raise
+    
     def get_crew(self, crew_name: str) -> Optional[Crew]:
         """Get a specific crew by name"""
         if not self.is_initialized:
@@ -192,7 +213,8 @@ class ADOSOrchestrator:
                 crew_name: len([a for a in self.agents_config.values() if a.crew == crew_name])
                 for crew_name in self.crews_config.keys()
             },
-            "configuration_status": self.config_loader.validate_config_integrity()
+            "configuration_status": self.config_loader.validate_config_integrity(),
+            "memory_status": self.memory_coordinator.get_memory_status() if hasattr(self, 'memory_coordinator') else None
         }
     
     def execute_simple_task(self, task_description: str, crew_name: str = "orchestrator") -> Optional[str]:
@@ -238,9 +260,21 @@ class ADOSOrchestrator:
             self.logger.error(f"Task execution failed: {e}")
             return None
     
+    def execute_task(self, task_description: str, crew_name: str = "orchestrator") -> Optional[str]:
+        """Execute a task using the specified crew (alias for execute_simple_task)"""
+        return self.execute_simple_task(task_description, crew_name)
+    
     def shutdown(self):
         """Shutdown the orchestrator and clean up resources"""
         self.logger.info("Shutting down ADOS Orchestrator...")
+        
+        # Synchronize memory before shutdown
+        if hasattr(self, 'memory_coordinator') and self.memory_coordinator.is_initialized:
+            try:
+                self.memory_coordinator.synchronize_memory()
+                self.logger.info("Memory synchronized before shutdown")
+            except Exception as e:
+                self.logger.warning(f"Failed to synchronize memory during shutdown: {e}")
         
         # Clear initialized crews and agents
         self.initialized_crews.clear()
@@ -250,6 +284,72 @@ class ADOSOrchestrator:
         self.is_initialized = False
         
         self.logger.info("ADOS Orchestrator shutdown complete")
+    
+    def decompose_and_execute_task(self, task_description: str) -> Dict[str, Any]:
+        """Decompose a task and execute it using appropriate crews"""
+        if not self.is_initialized:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+        
+        self.logger.info(f"Decomposing and executing task: {task_description}")
+        
+        try:
+            # Step 1: Decompose the task
+            decomposition = self.task_decomposer.decompose_task(task_description)
+            
+            if decomposition["status"] == "failed":
+                self.logger.error(f"Task decomposition failed: {decomposition.get('error', 'Unknown error')}")
+                return decomposition
+            
+            # Step 2: Execute subtasks in order
+            execution_results = []
+            for subtask in decomposition["subtasks"]:
+                crew_name = subtask["crew"]
+                description = subtask["description"]
+                priority = subtask["priority"]
+                
+                self.logger.info(f"Executing subtask [{priority}] with crew '{crew_name}': {description}")
+                
+                try:
+                    # Execute the subtask
+                    result = self.execute_task(description, crew_name)
+                    execution_results.append({
+                        "crew": crew_name,
+                        "description": description,
+                        "priority": priority,
+                        "result": result,
+                        "status": "success"
+                    })
+                except Exception as e:
+                    self.logger.error(f"Subtask execution failed for crew '{crew_name}': {e}")
+                    execution_results.append({
+                        "crew": crew_name,
+                        "description": description,
+                        "priority": priority,
+                        "error": str(e),
+                        "status": "failed"
+                    })
+            
+            # Step 3: Compile final results
+            final_result = {
+                "original_task": task_description,
+                "decomposition": decomposition,
+                "execution_results": execution_results,
+                "status": "completed",
+                "subtasks_completed": len([r for r in execution_results if r["status"] == "success"]),
+                "subtasks_failed": len([r for r in execution_results if r["status"] == "failed"]),
+                "total_subtasks": len(execution_results)
+            }
+            
+            self.logger.info(f"Task decomposition and execution completed: {final_result['subtasks_completed']}/{final_result['total_subtasks']} subtasks successful")
+            return final_result
+            
+        except Exception as e:
+            self.logger.error(f"Task decomposition and execution failed: {e}")
+            return {
+                "original_task": task_description,
+                "error": str(e),
+                "status": "failed"
+            }
     
     def reload_configuration(self) -> bool:
         """Reload configuration and reinitialize the system"""

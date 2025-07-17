@@ -410,6 +410,41 @@ class MemoryCoordinator:
             self.logger.error(f"Failed to synchronize memory: {e}")
             return False
     
+    async def store_data(self, session_id: str, key: str, data: Any) -> bool:
+        """Store data in memory (async interface for compatibility)"""
+        try:
+            # Convert data to JSON string for storage
+            content = json.dumps(data) if not isinstance(data, str) else data
+            return self.write_memory(session_id, "session", f"{key}: {content}")
+        except Exception as e:
+            self.logger.error(f"Failed to store data for key '{key}': {e}")
+            return False
+    
+    async def retrieve_data(self, session_id: str, key: str) -> Optional[Any]:
+        """Retrieve data from memory (async interface for compatibility)"""
+        try:
+            memory_content = self.read_memory(session_id, "session")
+            if not memory_content:
+                return None
+            
+            # Search for the key in memory content
+            for line in memory_content.split('\n'):
+                if f"{key}:" in line:
+                    # Extract the data part after the key
+                    data_part = line.split(f"{key}:", 1)[1].strip()
+                    try:
+                        # Try to parse as JSON
+                        return json.loads(data_part)
+                    except json.JSONDecodeError:
+                        # Return as string if not valid JSON
+                        return data_part
+            
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"Failed to retrieve data for key '{key}': {e}")
+            return None
+
     def get_memory_status(self) -> Dict[str, Any]:
         """Get memory system status"""
         try:

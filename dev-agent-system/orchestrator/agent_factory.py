@@ -130,6 +130,55 @@ class AgentFactory:
             self.logger.error(f"Failed to create agent '{agent_name}': {e}")
             raise
     
+    def _create_agent_from_config(self, agent_name: str, agent_config: dict) -> Agent:
+        """Create agent from dictionary configuration (internal method for testing)"""
+        # Convert dict to AgentConfig if needed
+        if isinstance(agent_config, dict):
+            # Create a minimal AgentConfig-like object for testing
+            class MockAgentConfig:
+                def __init__(self, config_dict):
+                    self.role = config_dict.get('role', '')
+                    self.goal = config_dict.get('goal', '')
+                    self.backstory = config_dict.get('backstory', '')
+                    self.tools = config_dict.get('tools', [])
+                    self.verbose = config_dict.get('verbose', False)
+                    self.max_iter = config_dict.get('max_iter', 5)
+            
+            agent_config = MockAgentConfig(agent_config)
+        
+        return self.create_agent(agent_name, agent_config)
+    
+    def create_orchestrator_agent(self) -> Agent:
+        """Create the main orchestrator agent"""
+        # Check cache first to avoid duplicate creation
+        if "default_orchestrator" in self._agent_cache:
+            return self._agent_cache["default_orchestrator"]
+        
+        # Try to get orchestrator agent from configuration
+        agents_config = self.config_loader.load_agents_config()
+        
+        # Look for orchestrator-type agent
+        orchestrator_names = ['orchestrator', 'system_orchestrator', 'main_orchestrator']
+        
+        for name in orchestrator_names:
+            if name in agents_config:
+                # Use _create_agent_from_config for dict configs
+                return self._create_agent_from_config(name, agents_config[name])
+        
+        # If no configured orchestrator found, create a default one
+        self.logger.warning("No orchestrator agent found in configuration, creating default")
+        
+        default_config = {
+            'role': "System Orchestrator",
+            'goal': "Coordinate and manage system operations", 
+            'backstory': "An experienced coordinator managing AI development crews",
+            'tools': ["system_monitor", "memory_writer", "task_decomposer"],
+            'verbose': False,
+            'max_iter': 5
+        }
+        
+        return self._create_agent_from_config("default_orchestrator", default_config)
+    
     def _get_agent_tools(self, tool_names: List[str]) -> List[Any]:
         """Get tools for an agent based on tool names"""
         tools = []
